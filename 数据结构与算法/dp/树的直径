@@ -1,0 +1,61 @@
+/*
+题意：树的直径！模板
+题解：枚举每一个结点的最长直径 取一个最大值就行了
+那么就直接建立无向图 挂书上搜索 
+*/ 
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+const int N=100000+100;
+const int M=2*N;
+int e[M];
+int ne[M];
+int start[M];
+int n;
+int idx;
+int dp[N];
+void add(int x,int y)
+{
+	e[idx]=y;
+	ne[idx]=start[x];
+	start[x]=idx++;
+	return ;
+}
+int res;
+int dfs(int u,int father)
+{
+	int d1=0;
+	int d2=0;
+	for(int i=start[u];~i;i=ne[i])
+	{
+		int son=e[i];
+		if(son==father)continue;
+		int d=dfs(son,u);
+		if(d>=d1)d2=d1,d1=d;
+		else if(d>d2)d2=d;
+	 } 
+	 res=max(res,d1+d2);
+	 return d1+1;
+}
+void init()
+{
+	memset(start,-1,sizeof start);
+	return ;
+}
+int main()
+{
+	cin>>n;
+	init();
+	for(int i=1;i<n;i++)
+	{
+		int x;
+		int y;
+		cin>>x>>y;
+		add(x,y);
+		add(y,x);
+	}
+	dfs(1,-1);
+	cout<<res<<endl;
+	return 0;
+}

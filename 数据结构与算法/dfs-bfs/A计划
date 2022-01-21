@@ -1,0 +1,95 @@
+/*
+题意：
+可怜的fish在一次次被魔王掳走一次次被勇者们救回来之后，而今，不幸的他再一次面
+临生命的考验。魔王已经发出消息说将在T时刻吃掉fish，因为他听信谣言说吃fish的
+肉也能长生不老。年迈的国王正是心急如焚，告招天下勇者来拯救fish。不过fish早
+已习以为常，他深信智勇的勇者肯定能将他救出。
+现据密探所报，fish被关在一个两层的迷宫里，迷宫的入口是S（0，0，0），fish的位
+置用P表示，时空传输机用# 表示，墙用*表示，平地用.表示。勇者们一进入时空传输机就
+会被转到另一层的相对位置，但如果被转到的位置是墙的话，那勇者们就会被撞死。勇
+者们在一层中只能前后左右移动，每移
+动一格花1时刻。层间的移动只能通过时空传输机，且不需要任何时间。 
+题解：dfs加上减枝 
+*/ 
+#include<iostream>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+using namespace std;
+const int N=15;//
+int book[2][N][N];
+char mp[2][N][N];
+int flag=0;
+int n;
+int m;
+int s;
+int ne[4][2]={0,1,1,0,-1,0,0,-1};
+void dfs(int now,int x,int y,int step)
+{
+	//cout<<flag<<endl;
+	//printf("(%d,%d,%d)\n",now,x,y); 
+	//cout<<mp[now][x][y]<<endl;
+	if(flag==1||step>s)return ;
+	if(mp[now][x][y]=='P')
+	{
+	//	cout<<step<<endl;
+		if(step<=s)
+		{
+			cout<<"YES"<<endl;
+			flag=1;
+		}
+		return ;
+	}
+	int tx,ty;
+	for(int i=0;i<4;i++)
+	{
+		//cout<<tx<<"  "<<ty<<endl;
+		tx=x+ne[i][0];
+		ty=y+ne[i][1];
+		/*if(tx==1&&ty==1){
+			cout<<10000000000<<endl;
+		}*/
+		//cout<<tx<<"  "<<ty<<endl;
+		//cout<<tx<<" "<<ty<<endl;
+		if(tx<0||ty<0||tx>=n||ty>=m||book[now][tx][ty]||mp[now][tx][ty]=='*')continue; 
+		if(mp[now][tx][ty]=='.'||mp[now][tx][ty]=='P'){
+			book[now][tx][ty]=1;
+			dfs(now,tx,ty,step+1);
+			book[now][tx][ty]=0;
+		}
+		else if(mp[now][tx][ty]=='#'&&mp[!now][tx][ty]!='#'&&mp[!now][tx][ty]!='*'&&book[!now][tx][ty]==0)
+		{
+		//	cout<<10000<<endl;
+			book[!now][tx][ty]=1;
+			book[now][tx][ty]=1;
+			dfs(!now,tx,ty,step+1);
+			book[!now][tx][ty]=0;
+			book[now][tx][ty]=0;
+		}
+		
+	}
+}
+int main()
+{	
+	int T;
+	cin>>T;
+	while(T--)
+	{
+		memset(book,0,sizeof book);
+		cin>>n>>m>>s;
+		for(int i=0;i<n;i++)
+		{
+			cin>>mp[0][i];
+		}
+		for(int i=0;i<n;i++)
+		{
+			cin>>mp[1][i];
+		}
+		book[0][0][0]=1;
+		flag=0;
+		dfs(0,0,0,0);
+	//	cout<<!0<<endl;
+		if(!flag)cout<<"NO"<<endl;
+	}
+	return 0;
+}

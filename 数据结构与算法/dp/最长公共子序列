@@ -1,0 +1,42 @@
+/*
+题意：最长公共子序列模板而已
+题解：定义dp[i][j]为以字符串a[i]结尾 b[j]结尾的最长公共子序列
+怎么求dp[i][j]？？ 
+分情况讨论如果a[i]==b[j]
+那么dp[i][j]就是dp[i-1][j-1]+1；
+如果不相等 那么就考虑继承 因为要求最长 那么这个时候继承就取一个最大值
+也就是max(dp[i][j-1],dp[i-1][j])
+*/
+#include<iostream>
+#include<cstring>
+using namespace std;
+const int N=1e3+100;
+char a[N];
+char b[N]; 
+int dp[N][N];
+int lena;
+int lenb;
+void init()
+{
+	sizeof(dp,0,sizeof dp);
+	lena=strlen(a+1);
+	lenb=strlen(b+1);
+	return ;
+}
+int main()
+{
+	while(~scanf("%s%s",a+1,b+1))
+	{
+		init();
+		for(int i=1;i<=lena;i++)
+		{
+			for(int j=1;j<=lenb;j++)
+			{
+				if(a[i]==b[j])dp[i][j]=dp[i-1][j-1]+1;
+				else dp[i][j]=max(dp[i][j-1],dp[i-1][j]);
+			}
+		 } 
+		 cout<<dp[lena][lenb]<<endl;
+	 } 
+	return 0;
+}

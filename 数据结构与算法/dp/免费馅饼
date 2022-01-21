@@ -1,0 +1,73 @@
+/*
+题意：最近阿彭的股票一片绿，本着大跌就是加仓
+信号的原则，阿彭急需一大笔资金投入股票市场。
+上帝可能可怜阿彭的不切实际想法，给了他一场白
+日梦，即白日做梦之捡钞票游戏。
+捡钞票游戏是这样的，钞票从天上往下掉，且只会
+掉在 [0, 10] 范围内，具体的坐
+标范围如下图所示。
+阿彭初始站在位置5上，且每秒只能在移动不超过1
+米的范围内接住掉落的钞票，如果没有接住，钞票
+就会消失。例如，在刚开始的一秒内，阿彭 只能接
+到4、5、6这三个位置其中一个位置的钞票。
+阿彭想要接住尽可能多的钞票（钞票面额相同），
+你能帮帮他吗？ 
+题解：
+我们定义dp[i][j]为 第i个结点在j秒的时候可以获得最大的钞票数量
+那么对于任意dp[i][j] = dp[i][j]=max(dp[i-1][j-1]+a[i][j],dp[i+1][j-1]+a[i][j]);
+不过这个题目有点小坑 就是我们固定了起点
+而上面的求法不能固定起点 只能固定终点
+所有我们将起点和终点换一下
+然后再做一下边界处理 
+	if(i-1>=0)dp[i][j]=max(dp[i][j],dp[i-1][j+1]+a[i][j]);
+	if(i+1<=10)dp[i][j]=max(dp[i][j],dp[i+1][j+1]+a[i][j]);
+	dp[i][j]=max(dp[i][j+1]+a[i][j],dp[i][j]); 
+*/
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+using namespace std;
+const int n=11; 
+int m;
+int a[15][100000+10];
+int dp[15][100000+10];//第i个结点在j秒的时候可以获得最大的钞票数量 
+//dp[i][j]=max(dp[i-1][j-1]+a[i][j],dp[i+1][j-1]+a[i][j]);
+//int dfs(int i,int j)
+//{
+//	if(dp[i][j]!=0)return dp[i][j];
+//	dp[i][j]=dp[i][j-1]+a[i][j];
+//	if(i-1>=0){
+//		dp[i][j]=dfs(i-1,j-1)+a[i][j];
+//	}
+//	if(i+1<=10)
+//	dp[i][j]=dfs(i+1,j-1)+a[i][j];
+//	return dp[i][j];
+//}
+int main()
+{
+	while(cin>>m&&m)
+	{
+		memset(dp,0,sizeof dp);
+		memset(a,0,sizeof a);
+		for(int i=1;i<=m;i++)
+		{
+			int x,y;
+			cin>>x>>y;
+			a[x][y]++;
+		}
+			for(int j=100000;j>=0;j--)		
+			{	
+				for(int i=0;i<=10;i++)
+				{
+					if(i-1>=0)dp[i][j]=max(dp[i][j],dp[i-1][j+1]+a[i][j]);
+					if(i+1<=10)dp[i][j]=max(dp[i][j],dp[i+1][j+1]+a[i][j]);
+					dp[i][j]=max(dp[i][j+1]+a[i][j],dp[i][j]);
+					
+				} 
+				
+			}
+			cout<<dp[5][0]<<endl;
+		}
+	
+	return 0;
+}

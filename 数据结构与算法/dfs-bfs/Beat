@@ -1,0 +1,50 @@
+/*
+题意：给定一个n n个顶点
+给定一个邻接矩阵图
+mp[i][j]为边权
+求 边权递增最多能走多少结点
+题解：dfs按照条件搜索
+顺便更新答案
+ 
+*/
+#include<iostream>
+#include<algorithm>
+#include<cstdio>
+using namespace std;
+const int N=20;
+int mp[N][N];
+int book[N];
+int ans;
+int n;
+int dfs(int now,int ago,int step)
+{
+	ans=max(ans,step);
+	for(int i=0;i<n;i++)
+	{
+		if(!book[i]&&mp[now][i]>=ago)
+		{
+			book[i]=1;
+			dfs(i,mp[now][i],step+1);
+			book[i]=0; 
+		}
+	}
+}
+int main()
+{
+
+	while(cin>>n)
+	{
+		for(int i=0;i<n;i++)
+		{book[i]=0;
+			for(int j=0;j<n;j++)
+			{
+				cin>>mp[i][j];
+			}
+		}
+		 ans=0;
+		 book[0]=1;
+		dfs(0,0,1);
+		cout<<ans<<endl;
+	}
+	return 0;
+}

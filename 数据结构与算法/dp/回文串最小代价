@@ -1,0 +1,48 @@
+/*
+题意：给定一个字符串和这个字符串中每个字母的2种操作（删除和添加）的代价
+求让这个字符串变成回文串的最小代价
+题解：定义dp[i][j]为让这个字符串中i到j的回文串的最小代价
+ 怎么算dp[i][j]??
+ 区间【i,j】可以直接拿区间【i+1,j】然后再（删掉i位置的字符）
+ 或者（在j+1位置添加一个和i位置一样的字符 ）构成回文串 
+ 同理也可以直接拿【i,j-1】然后 后再（删掉j位置的字符）
+ 或者（在i-1位置添加一个和j位置一样的字符 ）构成回文串 
+ 求最小代价那么dp[i][j]=min(dp[i+1][j]+cost[a[i]-'a'],dp[i][j-1]+cost[a[j]-'a']);
+ 其中cost[a[i]-'a']是添加字符a[i]或者删除a[i]代价最小值 
+ 但是 如果i位置上的字符和j位置上的字符相同 
+ 那么就更加简单了不用任何操作直接取dp[i+1][j-1]就行了 
+*/
+#include<iostream>
+#include<cstdio>
+using namespace std;
+int n;
+int m;
+const int N=2000+100;
+int dp[N][N];
+int cost[27];
+char a[N];
+int main()
+{
+	cin>>m>>n;
+	scanf("%s",a+1);
+	while(m--)
+	{
+		char x;
+		cin>>x;
+		int add;
+		int de;
+		cin>>add>>de;
+		cost[x-'a']=min(add,de);
+	}
+	for(int len=2;len<=n;len++)
+	{
+		for(int i=1;i+len-1<=n;i++)
+		{
+			int j=i+len-1;
+			if(a[i]==a[j])dp[i][j]=dp[i+1][j-1];//不用考虑len为2时的溢出 因为i>=j时一定0并且也无意义 
+			else dp[i][j]=min(dp[i+1][j]+cost[a[i]-'a'],dp[i][j-1]+cost[a[j]-'a']);
+		}
+	}
+	cout<<dp[1][n]<<endl;
+	return 0;
+}

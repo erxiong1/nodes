@@ -1,0 +1,124 @@
+/*
+题意：农夫约翰的牛发现，他的田地里沿
+着山脊生长的三叶草（我们可以将其视为
+一维数字线）特别好。
+农夫约翰有N头母牛（我们将母牛的编号从
+1到N）。每位农夫约翰的N头母牛都有她特
+别喜欢的三叶草范围（这些范围可能重叠）
+。范围由闭合间隔[S，E]定义。
+但是有些母牛很强壮，有些却很弱。给定两
+个母牛：母牛i和母牛j，它们最喜欢的三叶草
+范围是[Si，Ei]和[Sj，Ej]。如果Si <= Sj并
+且Ej <= Ei并且Ei-Si> Ej-Sj，我们说母牛i比母牛j强。
+对于每头母牛，有几头母牛比她强？农夫约翰需要您的帮助！
+输入项
+输入包含多个测试用例。
+对于每个测试用例，第一行是整数N（1 <= N <= 10 ^ 5），
+它是母牛的数量。然后是N行，其第i行包含两个整数：S和E（
+0 <= S<=E<=1e5 )
+输入的末尾包含单个0。
+输出量
+对于每个测试用例，输出一行包含n个以空格分隔的整数，其中
+第i个数字指定比母牛i强的母牛的数量。
+Sample Input
+3
+1 2
+0 3
+3 4
+0
+Sample Output
+1 0 0
+Hint
+Huge input and output,scanf and printf is recommended. 
+题解：这个题其实就求每个区间被其他区间覆盖多少次
+那么我们根据每个区间的左边界l排升序
+那么对于每条线段 a[i]来说所有可能覆盖他的区间下标都比他小了
+ 那么只要统计0到i-1之间有多少比a[i]的r大的数量了
+ 具体细节看代码 
+*/
+#include<iostream>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+#include<vector>
+using namespace std;
+const int N=1e5+100;
+int n;
+int max1;
+vector<int >alls;
+ struct node
+ {
+ 	int l,r;
+ 	int id;
+ }a[N];
+ int tr[N];
+ int res[N];
+ int lowbit(int i)
+ {
+ 	return i&-i;
+ }
+ bool com(node a,node b)
+ {
+ 	if(a.l==b.l)return a.r>b.r;
+ 	return a.l<b.l;
+ }
+ int query(int i)
+ {
+ 	int res=0;
+ 	for(;i;i-=lowbit(i))
+ 	{
+ 		res+=tr[i];
+	 }
+	 return res;
+ }
+ void modify(int i,int x)
+ {
+ 	for(;i<=max1;i+=lowbit(i))
+ 	{
+ 		tr[i]+=x;
+	 }
+ }
+int main()
+{
+	while(~scanf("%d",&n)&&n)
+	{
+		memset(tr,0,sizeof tr);
+		memset(res,0,sizeof res);
+		max1=0;
+		for(int i=1;i<=n;i++)
+		{
+			scanf("%d%d",&a[i].l,&a[i].r);
+			a[i].l++;
+			a[i].r++;
+			a[i].id=i;
+			max1=max(max1,a[i].r);
+		}
+		sort(a+1,a+n+1,com);
+//		for(int i=1;i<=n;i++){
+//			cout<<a[i].l<<" ";
+//		}
+		for(int i=1;i<=n;i++)
+		{
+			int cnt=1;
+			int j=i;
+			while(j+1<=n)
+			{
+				if(a[j+1].l==a[j].l&&a[j+1].r==a[j].r)cnt++,j++;
+				else break;
+			}
+			res[a[j].id]=query(max1)-query(a[i].r-1);
+			modify(a[i].r,cnt);
+			for(;i<j;i++)
+			{
+				res[a[i].id]=res[a[j].id];
+			}
+		}
+		//cout<<query(100)<<endl;
+		for(int i=1;i<=n;i++)
+		{
+			printf("%d ",res[i]);
+		}
+		printf("\n");
+	}
+	return 0;
+ } 

@@ -1,0 +1,47 @@
+/*
+题意:最长上升子序列模板！
+题解：传统的最长上升子序列是定义dp[i]为以a[i]结尾的最长上升子序列
+也就是从a[0~i-1]找小与a[i]并且 最大dp值
+而nlogn版本是利用单调性去掉多余步骤然后二分
+怎么去除多余步骤？？
+我们每次在[0,i-1]区间找最大dp时
+如果存在a[k]<a[j]并且dp[k]>dp[j]时
+如果可以选择了i接在了j后面 那么肯定可以选择接在k后面得到更优结果
+故a[j]其实每次都是多余运算
+所以 我们防止多余运算的话
+只要保留以他结尾的最长子序列为len的最小值就行了
+只要将这些值按照大小排序 我们找出最大化最小值就ok了(二分)
+那么每次操作是logn的
+故总时间复杂度nlogn 
+*/
+#include<iostream>
+using namespace std;
+const int N = 100000+100; 
+int e[N];
+int main()
+{
+	int n;
+	cin>>n;
+	e[0]=-2e9;//边界处理 
+	int tot=0;
+	for(int i=1;i<=n;i++)
+	{
+		int x;
+		cin>>x;
+		int l=0;
+		int r=tot;
+		while(l<=r)//找出小于x的最大数下边 x就可以接在后面了 
+		{
+			int mid=(l+r)>>1;
+			if(x<e[mid]) 
+			{
+				r=mid-1;
+			}
+			else l=mid+1;
+		}
+		e[r+1]=x;
+		tot=max(tot,r+1);
+	}
+	cout<<tot<<endl;
+	return 0;
+ } 

@@ -1,0 +1,71 @@
+/*
+题意：还记得2020年招新赛中“编织字符串”这一道题吗？
+tls在ac完以后想出了一个更有趣的问题，具体是这样的：
+给定两个长度均为len的字符串s1、s2和一个长度为len*2的字符串s，
+每一次我们按照编织字符串的操作将s1和s2拼接起来（注意这里s2先拼接，具体请看样例），得到长度为len*2的字符串s'
+然后令s1为s'的前一半，s2为s'的后一半，反复以上操作。
+若在某一次中s'和s相等则结束循环。
+假设有s1="JNU",s2="ACM",s="NAMJUC"
+第一次操作后得到s'="AJCNMU"，与s不相等。
+令s1="AJC",s2="NMU"
+第二次操作后得到s'="NAMJUC"，与s相等，结束循环。
+输出操作次数为2
+题解：只有一种状态 所有直接dfs找结果 但是如果出现重复数据了 那就会死递归 那么就标记一下 
+*/ 
+#include<iostream>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+#include<string>
+#include<map>
+#include<cstring>
+using namespace std;
+string s1,s2,s3;
+map<pair<string ,string> ,bool>mp;
+void dfs(int cnt)
+{
+	string t;
+	//int idx=0;
+	for(int i=0;i<s1.size();i++)
+	{
+		t.push_back(s2[i]);
+		t.push_back(s1[i]);
+		
+	}
+	if(t==s3)
+	{
+		cout<<cnt<<endl;
+		return ;
+	}
+	for(int i=0;i<s1.size();i++)
+	{
+		s1[i]=t[i];
+		s2[i]=t[i+s1.size()];
+	}
+	if(mp[make_pair(s1,s2)]==true)
+	{
+		cout<<-1<<endl;
+		return ;
+	}
+	mp[make_pair(s1,s2)]=true;
+	dfs(cnt+1);
+	return ;
+}
+int main()
+{
+	int T;
+	cin>>T;
+	int i=1;
+	while(T--)
+	{
+		mp.clear();
+		int n;
+		cin>>n;
+		cin>>s1>>s2>>s3;
+		mp[make_pair(s1,s2)]=true;
+		int cnt=1;
+		cout<<i++<<" "; 
+		dfs(cnt);
+	}
+	return 0;
+ } 

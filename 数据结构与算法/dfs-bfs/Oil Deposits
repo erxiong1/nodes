@@ -1,0 +1,79 @@
+/*
+题意：在第一次植物僵尸世界大战中，植物国的黑玫瑰王子使用了植物国的超超超超级无敌禁术-----”BUG”,开启了异次元的大门，在一位超超超超...级**的指挥官”辅助器”带领下，打败了僵尸王国，但是也因此植物国大伤元气，无法再得到异次元的帮助。 过了10000年后，僵尸国王子为了国家的荣誉和发扬祖先的”诺克萨斯”精神，打算采取”闪电战”战术，一举歼灭植物国的战略要塞，吹起第二次植物僵尸世界大战的号角，但是僵尸王子需要知道植物国现在有几个战略要塞，才能采取进一步措施，于是开始研究植物国的军事图。
+因为僵尸国卫星技术先进，该军事图十分清楚明了，是一个二维的电子网格图，图中只有黑色和白色，只要图中的白色方块外一圈的八个方块中有白色方块，说明它们属于同一个战略要塞。
+题解：小小bfs 只需要将bfs出每个要塞的全部@就行了 
+*/
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+int n;
+int m;
+const int N=110;
+char mp[N][N];
+int book[N][N];
+int cnt;
+void init()
+{
+	cnt=0;
+	memset(mp,0,sizeof mp);
+	memset(book,0,sizeof book);
+	return ;
+}
+void getdata()
+{
+	for(int i=1;i<=n;i++)
+	{
+		for(int j=1;j<=m;j++)
+		{
+			cin>>mp[i][j];
+		}
+	 } 
+	return ;
+}
+int ne[8][2]={1,0,0,1,-1,0,0,-1,1,1,1,-1,-1,1,-1,-1};
+void bfs(int x,int y)
+{
+	for(int i=0;i<8;i++)
+	{
+		int tx;
+		int ty;
+		tx=x+ne[i][0];
+		ty=y+ne[i][1];
+		if(tx>=1&&tx<=n&&ty>=1&&ty<=m&&mp[tx][ty]=='@'&&book[tx][ty]==0)
+		{
+			book[tx][ty]=1;
+			bfs(tx,ty);
+		}
+	 } 
+	 return ;
+}
+void solve()
+{
+	for(int i=1;i<=n;i++)
+	{
+		for(int j=1;j<=m;j++)
+		{
+			if(mp[i][j]=='@'&& !book[i][j])
+			{
+				cnt++;
+				book[i][j]=1;
+				bfs(i,j);
+			}
+		}
+	}
+}
+int main()
+{ 
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	while(cin>>n>>m && n+m)
+	{
+		init();
+		getdata();
+		solve();
+		cout<<cnt<<endl;
+	}
+	return 0;
+ } 

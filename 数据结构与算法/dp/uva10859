@@ -1,0 +1,132 @@
+/*
+题意：一个图允许个结点上面放路灯 要求每条边至少被一盏灯照亮
+求最少几个灯 同时让被2盏灯照亮的边数最多
+题解：建图树上dp 
+ 定义dp[N][2];
+ 其中 dp[i][0]表示以i为根 根不放灯的最少放灯数量
+ dp[i][1]为以i为根 根放灯的最少放灯数量
+ 那么i不放灯时 那么儿子只能选择放灯 
+ 当i放灯的时候i的儿子就有2种选择了0或者1(放灯或者不放灯)都是满足边至少被一盏灯照亮
+ 此时 就要考虑让灯尽量少 那么就有
+ if(dp[son][0]<dp[son][1])时 我们是选择不放灯 
+ if(dp[son][0]>dp[son][1])时呢 我们 肯定选择的是放灯
+ 但是当 dp[son][0]==dp[son][1]时呢 我们当然是考虑放灯 
+ 因为这样就会让被2盏灯照亮的边数边多 
+ 所以我们只需要在dfs时在维护一个dp1[N][2]来记录以i为根  根放灯或者不放灯的只一盏灯照亮的变数（同时让被2盏灯照亮的边数） 
+*/
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+int n,m;
+const int N=20000+200;
+int e[N];
+int ne[N];
+int start[N];
+int idx;
+int dp[N][2];//dp[i][0]表示以i为根 i不放登的最少登数  dp[i][1]表示以i为根 根放灯的最少灯数 
+int dp1[N][2];// 只被一盏灯照亮 
+int book[N];
+void add(int x,int y)
+{
+	e[idx]=y;
+	ne[idx]=start[x];
+	start[x]=idx++;
+	return ;
+}
+void init()
+{
+	idx=0;
+	memset(start,-1,sizeof start);
+	memset(dp,-1,sizeof dp);
+	memset(book,0,sizeof book);
+}
+void dfs(int u,int father)
+{
+	if(book[u])return ;
+	book[u]=1;
+	dp[u][0]=0;
+	dp[u][1]=1;
+	dp1[u][0]=dp1[u][1]=0;
+	for(int i=start[u];~i;i=ne[i])
+	{
+		int son=e[i];
+		if(son==father)continue;
+		dfs(son,u);
+		book[son]=1;
+		dp[u][0]+=dp[son][1];
+		dp1[u][0]+=dp1[son][1]+1;//自己不放灯 儿子放灯 
+		//dp[u][1]+=max(dp[son][0],son[son][1]);
+		if(dp[son][0]<dp[son][1]||(dp[son][0]==dp[son][1]&&dp1[son][0]<dp1[son][1]))//儿子不放好一些  要让dp1[u][1]尽量少 
+		{
+			 dp[u][1]+=dp[son][0];
+			 dp1[u][1]+=dp1[son][0]+1;
+		}
+		else 
+		{
+			dp[u][1]+=dp[son][1];
+			dp1[u][1]+=dp1[son][1];
+		}
+	}
+}
+int main()
+{
+	//freopen("out.out","w",stdout);
+	int T;
+	cin>>T;
+	int cnt=0;
+	while(T--)
+	{
+		cin>>n>>m;
+		init();
+		for(int i=1;i<=m;i++)
+		{
+			int x;
+			int y;
+			cin>>x>>y;
+			add(x,y);
+			add(y,x);
+		}
+		int ans1=0,ans2=0;
+		for(int i=0;i<n;i++)
+		{
+			if(!book[i])
+			{
+				
+				dfs(i,-1);
+				book[i]=1;
+				if(dp[i][0]>dp[i][1]||(dp[i][0]==dp[i][1]&&dp1[i][0]>dp1[i][1]))
+				{
+					ans1+=dp[i][1];
+					ans2+=dp1[i][1];
+				}
+				else 
+				{
+					ans1+=dp[i][0];
+					ans2+=dp1[i][0];
+					
+				}
+			}
+		}
+	
+		cout<<ans1<<" "<<m-ans2<<" "<<ans2<<endl;
+
+	/*	root=0;
+		if(dp[root][1]==dp[root][0])
+		{
+			cout<<dp[root][1]<<" "<<m-min(dp1[root][1],dp1[root][0])<<" "<<min(dp1[root][1],dp1[root][0])<<endl;;
+		}
+		else 
+		{
+			if(dp[root][1]<dp[root][0])
+			{
+				cout<<dp[root][1]<<" "<<m-dp1[root][1]<<" "<<dp1[root][1]<<endl;
+			}
+			else 
+			{
+				cout<<dp[root][0]<<" "<<m-dp1[root][0]<<" "<<dp1[root][0]<<endl;
+			}*/
+		
+	}
+	return 0;
+}

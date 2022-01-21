@@ -1,0 +1,32 @@
+/*
+题意：输入一个n 找出一个有0和1构成的10进制数%n==0;
+题解；暴力枚举每个种答案bfs 
+*/ 
+#include<iostream>
+#include<algorithm>
+using namespace std;
+const int N=10000000;
+long long que[N];
+long long bfs(int n)
+{
+	int tail;
+	int head;
+	head=tail=0;
+	que[tail++]=1;
+	while(1)
+	{
+		if(que[head]%n==0)return que[head];
+		que[tail++]=que[head]*10;
+		que[tail++]=que[head]*10+1;
+		head++;
+	}
+ } 
+int main()
+{
+	int n;
+	while(cin>>n&&n)
+	{
+		cout<<bfs(n)<<endl;
+	}
+	return 0;
+}

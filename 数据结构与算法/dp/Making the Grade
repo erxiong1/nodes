@@ -1,0 +1,42 @@
+/*
+题意：题目大意
+给定序列A,B。要求B严格单调，要求最小化
+题解：
+定义dp[i][j]是考虑前i个序列 高度为j的最小点代价
+那么我们对于任意一个dp[i][j]他一定是继承dp[i-1]的一种状态得来
+又要最小代价所有取个最小值 
+ 
+
+*/
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#include<vector>
+using namespace std;
+const int N=2005;
+int a[N]; 
+int dp[N][N];
+vector<int >alls;
+int main() 
+{
+	int n;
+	cin>>n;
+	for(int i=1;i<=n;i++)
+	{
+		cin>>a[i];
+		alls.push_back(a[i]);
+	}
+	sort(alls.begin(),alls.end());
+	int ans=2e9;
+	for(int i=1;i<=n;i++)
+	{
+		int val=2e9;
+		for(int j=1;j<=n;j++)
+		{
+			val=min(val,dp[i-1][j]);
+			dp[i][j]=val+abs(a[i]-alls[j-1]);
+			if(i==n)ans=min(ans,dp[i][j]);
+		}
+	}
+	cout<<ans<<endl;
+}

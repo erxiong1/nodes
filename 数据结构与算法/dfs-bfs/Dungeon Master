@@ -1,0 +1,101 @@
+/*
+题意：给定一个三维数组求S走到E的最少步数
+题解：bfs搜索 和简单是二维一样至少地图变成了三维的了 那么我们走的方案就变成了6步
+直接开搜 
+ 
+*/
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdio>
+using namespace std;
+const int N=34;
+char  mp[N][N][N];
+int book[N][N][N];
+int n,m,r;
+struct node
+{
+	int x,y,z;
+	int cnt;
+};
+node start;
+node end;
+void init()
+{
+	memset(mp,0,sizeof mp);
+	memset(book,0,sizeof book);
+	return ;
+}
+void getdata()
+{
+	for(int i=1;i<=n;i++)
+	{
+		for(int j=1;j<=m;j++)
+		{
+			for(int k=1;k<=r;k++)
+			{
+				cin>>mp[i][j][k];
+				if(mp[i][j][k]=='S')
+				{
+					start={i,j,k};
+				}
+			}
+		}
+	}
+}
+void solve()
+{
+	book[start.x][start.y][start.z]=1;
+	start.cnt=0;
+	queue<node> que;
+	que.push(start);
+	int ne[6][3]={{0,0,1},{0,1,0},{0,-1,0},{0,0,-1},{-1,0,0},{1,0,0}};
+	int flag=0;
+	int ans=0;
+	while(!que.empty())
+	{
+		node temp=que.front();
+		int tx,ty,tz;
+		for(int i=0;i<6;i++)
+		{
+			tx=temp.x+ne[i][0];
+			ty=temp.y+ne[i][1];
+			tz=temp.z+ne[i][2];
+			if(tx>=1&&ty>=1&&tz>=1&&ty<=m&&tx<=n&&tz<=r&&book[tx][ty][tz]==0&&mp[tx][ty][tz]!='#')
+			{
+				book[tx][ty][tz]=1;
+				que.push({tx,ty,tz,temp.cnt+1});
+				if(mp[tx][ty][tz]=='E')
+				{
+					ans=temp.cnt+1;
+					flag=1;
+					break;
+				}
+			}
+		}
+		if(flag)
+		{
+			break;
+		}
+		que.pop();
+	}
+	if(flag)
+	{
+		printf("Escaped in %d minute(s).\n",ans);
+	}
+	else 
+	{
+		cout<<"Trapped!"<<endl;
+	}
+}
+int main()
+{
+	while(cin>>n>>m>>r&&n+m+r)
+	{
+		init();
+		getdata();
+		solve(); 
+	}
+	return 0;
+ } 

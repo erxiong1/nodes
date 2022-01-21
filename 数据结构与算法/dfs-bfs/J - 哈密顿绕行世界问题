@@ -1,0 +1,80 @@
+/*
+题意：一个规则的实心十二
+、面体，它的 20个顶点标出
+世界著名的20个城市，你从一
+个城市出发经过每个城市刚好
+一次后回到出发的城市。 
+题解：邻接图 然后dfs搜索
+当搜索到全部结点并且可以回到终点
+那么就输出 
+*/
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+const int n=20;
+int mp[n+1][n+1];
+int tot=0;
+int book[n+1];
+int ans[n+1];
+int start;
+void dfs(int u,int step)
+{
+//	cout<<step<<endl;
+	if(step==n)
+	{
+		if(mp[u][start]==1)
+		{
+			printf("%d: ",++tot);
+			for(int i=0;i<step;i++)
+			{
+				printf(" %d",ans[i]);
+			}
+			printf(" %d\n",start);
+			
+		}
+		return ;
+	}
+	for(int i=1;i<=n;i++)
+	{
+		if(!book[i]&&mp[u][i])
+		{
+			book[i]=1;
+			ans[step]=i;
+			dfs(i,step+1);
+			book[i]=0;
+		}
+	}
+}
+int main()
+{
+	while(1)
+	{
+		memset(mp,0,sizeof mp);
+		memset(ans,0,sizeof ans);
+		memset(book,0,sizeof book); 
+		tot=0;
+		for(int i=1;i<=n;i++)
+		{
+			int x,y,z;
+			cin>>x;
+			if(x==0)return 0;
+			cin>>y>>z;
+			mp[i][x]=mp[i][y]=mp[i][z]=1;
+		}
+//		for(int i=1;i<=n;i++)
+//		{
+//			for(int j=1;j<=n;j++)
+//			{
+//				cout<<mp[i][j]<<" ";
+//			}
+//			cout<<endl;
+//		}
+		cin>>start;
+		book[start]=1;
+		ans[0]=start;
+		dfs(start,1);
+		book[start]=0;
+	 } 
+	return 0;
+ } 

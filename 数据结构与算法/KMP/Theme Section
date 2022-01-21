@@ -1,0 +1,83 @@
+/*
+题意:给定一个字符串求满足EAEBE的最长E的大小
+所谓EAEBE就是 说 将这个字符串 分为 5部分 其中开头和结尾 还有中间都必须出现E这个字符串A和B字符串可以不存在 E也可以不存在
+输出E最大的大小
+题解：观察EAEBE这个结构 不就是开头必须是E 结尾也必须是E 那不就是 这个字符串
+前后缀   要有相等的部分 并且中间也存在这部分 那我们就求出一个最长相等前后缀
+的数组ne  那么ne[len]就是 就表示了 EAEBE 中 E最大的长度了
+现在只要在中间找到一个 E 就行了 
+那么中间这个 E字符串 的末尾的ne值一定>=ne[len]  必须取(>例如这组数据aaaaaaaaaaa  前面2个E连接起来了时候会构成循环节 那么第二个E的ne值会是第一个的二倍)
+的 因为这样就说明 他和整个字符串的开的
+的前ne[len]个字符相等 
+而我们只需要中[2*ne[len],len-ne[len]]开始找
+因为我们不能 和开头的E和结尾的E有重合
+说到重合了
+那么 其实也有特殊情况 ne[len]可能是错误的 
+假如存在3个以上 循环节 那么就会有问题了 
+就是说 最长前缀和后缀有交集了 那么肯定是不行的了
+例如abbabbabb
+肉眼来看 应该知道答案是3
+但是 
+ne[最后一个b]并不会是记录3 而是6
+
+也就是说 我们存在多个循环节的时候 答案不能取 ne[len]
+我们应当以每个单独的循环节为个体 进行适配
+就如上例子
+ abbabbabb
+ 我们可以取abb 
+ 但是 abbabbabbabbabbabb
+ 我们的答案又是6 也就是E==abbabb
+ 所有我们把前缀所有满足条件的情况从大到小都实验一次 找到了第一个满足条件的就行了 
+*/
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+using namespace std;
+const int N=1e6+100;
+char a[N];
+int ne[N];
+int len;
+void getnext()
+{
+	for(int i=2,j=0;i<=len;i++)
+	{
+		while(j&&a[i]!=a[j+1])j=ne[j];
+		if(a[j+1]==a[i])j++;
+		ne[i]=j; 
+	}
+	return ;
+}
+void solve()
+{
+	int ans=0;
+	for(int i=ne[len];i;i=ne[i]) 
+	{
+		
+		int flag=0;
+		for(int j=i*2;j<=len-i;j++)
+		{
+			if(ne[j]>=i)
+			{
+				ans=i; 
+				flag=1; 
+				break; 
+			 } 
+		}
+		if(flag==1)break;
+	}
+	printf("%d\n",ans);
+}
+int main()
+{
+	int t;
+	scanf("%d",&t);
+	while(t--)
+	{
+		scanf("%s",a+1);
+		len=strlen(a+1);
+		getnext();
+		//for(int i=1;i<=n;)
+		solve();
+	}
+	return 0;
+ }
